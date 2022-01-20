@@ -1,0 +1,22 @@
+
+#spring.jpa.hibernate.ddl-auto=update
+#spring.datasource.url=jdbc:mysql://localhost:3306/book-management-system
+#spring.datasource.username=root
+#spring.datasource.password=root
+#spring.datasource.driver-class-name =com.mysql.jdbc.Driver
+#spring.jpa.show-sql: true
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/book-management-system?useSSL=false&autoReconnect=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: root
+    password: root
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL57Dialect
+        format_sql: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
