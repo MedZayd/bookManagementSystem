@@ -11,6 +11,7 @@ import java.util.Set;
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "book_id")
     private Long id;
 
     private String title;
@@ -19,15 +20,15 @@ public class Book {
 
     private Date publishedDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="author_id", nullable=false)
     private Author author;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "photo_id", referencedColumnName = "id")
+    @JoinColumn(name = "photo_id", referencedColumnName = "photo_id")
     private Photo photo;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "book_category",
             joinColumns = @JoinColumn(name = "book_id"),

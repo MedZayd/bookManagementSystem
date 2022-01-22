@@ -11,10 +11,15 @@ import java.util.Set;
 public class Author {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "author_id")
     private Long id;
     private String firstName;
     private String lastName;
     private Date birthDate;
-    @OneToMany(mappedBy = "author")
+    @OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE)
     private Set<Book> bookSet;
+
+    public String getFullName() {
+        return this.firstName.concat(" ").concat(this.lastName);
+    }
 }
