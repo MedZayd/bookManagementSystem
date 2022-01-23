@@ -15,6 +15,7 @@ public class Author {
     private Long id;
     private String firstName;
     private String lastName;
+    private String email;
     private Date birthDate;
     @OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE)
     private Set<Book> bookSet;

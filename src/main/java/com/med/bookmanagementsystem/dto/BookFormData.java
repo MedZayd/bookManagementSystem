@@ -8,4 +8,5 @@ import java.util.List;
 public class BookFormData {
     private List<AuthorDto> authors;
     private List<CategoryDto> categories;
+    private List<LanguageDto> languages;
 }

@@ -30,8 +30,15 @@ public class Book {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "book_category",
+            name = "category_book",
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     private Set<Category> categories;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "book_language",
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "lang_id"))
+    private Set<Language> languages;
 }

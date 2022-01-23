@@ -15,6 +15,9 @@
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>1.8</java.version>
+		<flyway.user>databaseUser</flyway.user>
+		<flyway.password>databasePassword</flyway.password>
+		<flyway.schemas>schemaName</flyway.schemas>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -29,6 +32,10 @@
 			<groupId>org.modelmapper</groupId>
 			<artifactId>modelmapper</artifactId>
 			<version>2.4.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
 
 		<dependency>

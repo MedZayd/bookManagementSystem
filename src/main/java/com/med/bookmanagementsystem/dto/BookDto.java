@@ -17,4 +17,6 @@ public class BookDto {
     private String photoLink;
     private Set<String> categories;
     private Set<Long> categoryIds;
+    private Set<String> languages;
+    private Set<Long> languagesIds;
 }

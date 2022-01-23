@@ -1,19 +1,12 @@
 package com.med.bookmanagementsystem.service.impl;
 
-import com.med.bookmanagementsystem.dto.AuthorDto;
-import com.med.bookmanagementsystem.dto.BookDto;
-import com.med.bookmanagementsystem.dto.BookFormData;
-import com.med.bookmanagementsystem.dto.CategoryDto;
-import com.med.bookmanagementsystem.entity.Author;
-import com.med.bookmanagementsystem.entity.Book;
-import com.med.bookmanagementsystem.entity.Category;
-import com.med.bookmanagementsystem.entity.Photo;
+import com.med.bookmanagementsystem.dto.*;
+import com.med.bookmanagementsystem.entity.*;
 import com.med.bookmanagementsystem.exception.AuthorNotFoundException;
 import com.med.bookmanagementsystem.exception.BookNotFoundException;
 import com.med.bookmanagementsystem.exception.CategoryNotFoundException;
-import com.med.bookmanagementsystem.repository.AuthorRepo;
-import com.med.bookmanagementsystem.repository.BookRepo;
-import com.med.bookmanagementsystem.repository.CategoryRepo;
+import com.med.bookmanagementsystem.exception.LanguageNotFoundException;
+import com.med.bookmanagementsystem.repository.*;
 import com.med.bookmanagementsystem.service.BookService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +30,12 @@ public class BookServiceImpl implements BookService {
     private CategoryRepo categoryRepo;
 
     @Autowired
+    private LanguageRepo languageRepo;
+
+    @Autowired
+    private PhotoRepo photoRepo;
+
+    @Autowired
     private ModelMapper mapper;
 
     @Transactional
@@ -52,6 +51,14 @@ public class BookServiceImpl implements BookService {
             });
             bookDto.setCategoryIds(ids);
             bookDto.setCategories(categories);
+            Set<String> languages = new HashSet<>();
+            Set<Long> langIds = new HashSet<>();
+            book.getLanguages().forEach(lang -> {
+                languages.add(lang.getName());
+                langIds.add(lang.getId());
+            });
+            bookDto.setLanguages(languages);
+            bookDto.setLanguagesIds(langIds);
             return bookDto;
         }).collect(Collectors.toList());
     }
@@ -59,10 +66,12 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookFormData getBookFormData() {
         List<AuthorDto> authors = authorRepo.findAll().stream().map(a -> mapper.map(a, AuthorDto.class)).collect(Collectors.toList());
+        List<LanguageDto> languages = languageRepo.findAll().stream().map(l -> mapper.map(l, LanguageDto.class)).collect(Collectors.toList());
         List<CategoryDto> categories = categoryRepo.findByParentIsNotNull().stream().map(c -> mapper.map(c, CategoryDto.class)).collect(Collectors.toList());;
         BookFormData formData = new BookFormData();
         formData.setAuthors(authors);
         formData.setCategories(categories);
+        formData.setLanguages(languages);
         return formData;
     }
 
@@ -83,6 +92,14 @@ public class BookServiceImpl implements BookService {
                             .collect(Collectors.toSet());
             book.setCategories(categories);
         }
+        if (!CollectionUtils.isEmpty(bookDto.getLanguagesIds())) {
+            Set<Language> languages =
+                    bookDto.getLanguagesIds()
+                            .stream()
+                            .map(id -> languageRepo.findById(id).orElseThrow(LanguageNotFoundException::new))
+                            .collect(Collectors.toSet());
+            book.setLanguages(languages);
+        }
         Author author = authorRepo.findById(bookDto.getAuthorId()).orElseThrow(AuthorNotFoundException::new);
         book.setAuthor(author);
         if (Objects.nonNull(bookDto.getPhotoLink())) {
@@ -98,6 +115,9 @@ public class BookServiceImpl implements BookService {
     @Override
     public void deleteBookById(Long id) {
         Book book = bookRepo.findById(id).orElseThrow(BookNotFoundException::new);
+        if (Objects.nonNull(book.getPhoto())) {
+            photoRepo.delete(book.getPhoto());
+        }
         bookRepo.delete(book);
     }
 }
